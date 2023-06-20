@@ -4,7 +4,7 @@
 
 This repository contains stuff that can help you to work with Ros2 running inside Docker containers.
 
-The main idea is to be able to increase the iteration speed while developing for Ros2.
+The main idea is to be able to increase the iteration speed while developing with Ros2.
 
 This is a WIP.
 
@@ -20,7 +20,7 @@ Clone the repo, jump into the repository folder and run `make help` to see the a
 
 ## Motivation
 
-The main idea is to be able to increase the iteration speed while developing for Ros2.
+The main idea is to be able to increase the iteration speed while developing with Ros2.
 
 Working with Ros2 is challenging.
 
