@@ -10,13 +10,13 @@ This is a WIP.
 
 ## Requirements
 
-For now, this is working only for Linux and it is only tested in Ubuntu 22.04.
-
-The idea is to make it work in MacOS and Windows in the future.
+[GNU Make](https://www.gnu.org/software/make/) and [Docker](https://www.docker.com/)
 
 ## Getting started
 
 Clone the repo, jump into the repository folder and run `make help` to see the available recipes.
+
+Then start developing your robot by changing things inside ws (workspace) folder.
 
 ## Motivation
 
@@ -34,4 +34,4 @@ Another alternative is Docker.
 
 Working with Docker and Ros2 is challenging, cause you typically want to run GUI applications in your guess system, and that's not the usual workflow you use with Docker.
 
-While other projects are trying to solve this same problem, for example [rocker](https://github.com/osrf/rocker), I decided to implement my own simple approach.
+While other projects are trying to solve this same problem, for example, [rocker](https://github.com/osrf/rocker), I decided to implement my own simple approach.

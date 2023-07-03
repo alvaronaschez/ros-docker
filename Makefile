@@ -1,40 +1,54 @@
 SHELL=/bin/bash
-ros-default-distro := humble
-ros-distro := $(if $(ROS_DISTRO),$(ROS_DISTRO),$(ros-default-distro))
+
+project-name := my-bot
+ros-distro := galactic
+image-repository := $(project-name)
+image-tag := $(project-name)
+image-name := $(image-repository):$(image-tag)
+container-name := $(project-name)-container
+
+ifeq ($(OS),Windows_NT)
+	detected_OS := Windows
+	create_container_script := .\docker\create_container.bat
+else
+	detected_OS := $(shell uname)  # same as "uname -s"
+	create_container_script := ./docker/create_container.bash
+endif
 
 help: # show help for each of the Makefile recipes
 	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
 
-build: # build container
-	docker build --tag 'ros:$(ros-distro)-desktop-full' --build-arg ROS_DISTRO=$(ros-distro) .
+build: # build image
+	docker build \
+		--tag $(image-name) \
+		--build-arg ROS_DISTRO=$(ros-distro) \
+		--no-cache \
+		--file docker/Dockerfile .
 
-run: # run container for the first time
-	./scripts/run_docker.sh $(ros-distro)
+create: # create container
+	$(create_container_script) $(project-name) $(container-name) $(image-name)
 
 start: # start stopped container
-	docker start ros-$(ros-distro)
+	docker start $(container-name)
 
 stop: # stop running container
-	docker stop ros-$(ros-distro)
+	docker stop $(container-name)
 
 remove: # remove stopped container
-	docker rm ros-$(ros-distro)
+	docker rm $(container-name)
+
+remove-image: # remove the image
+	docker image rm $(container-name)
 
 bash: # run bash shell in running container
-	docker exec -it ros-$(ros-distro) bash
+	docker exec -it $(container-name) bash
 
 shell: # run shell in running container
-	docker exec -it ros-$(ros-distro) bash
+	docker exec -it $(container-name) bash
 
-print-ros-distro: # print the Ros2 distro you are using
-	@echo $(ros-distro)
+clone:
+	rm -rf ws/src
+	git clone --recurse-submodules $(repo) ws
 
-help-ros-distro: # show help about how to set the Ros2 distro
-	@echo '*' For setting up Ros2 distro for this terminal, run:
-	@echo '    export ROS_DISTRO={ros distro}'
-	@echo '    example:'
-	@echo '        export ROS_DISTRO=humble'
-	@echo
-	@echo '*' For setting up Ros2 distro in a permanent way, run:
-	@echo '    echo "export ROS_DISTRO={ros distro}" >> ~/.zshrc'
-	@echo '    or ~/.bashrc depending on the terminal you are using'
+print-os: # print the os that has been detected
+	@echo $(detected_OS)
